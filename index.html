@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Психологический тест</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .question { margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+  <h1>Тест MBTI (упрощённо)</h1>
+  <div id="quiz">
+    <div class="question">
+      <label>1. Вам комфортнее в компании или в одиночестве?</label><br>
+      <input type="radio" name="q1" value="E"> В компании<br>
+      <input type="radio" name="q1" value="I"> В одиночестве
+    </div>
+
+    <div class="question">
+      <label>2. Вы больше опираетесь на факты или интуицию?</label><br>
+      <input type="radio" name="q2" value="S"> Факты<br>
+      <input type="radio" name="q2" value="N"> Интуиция
+    </div>
+
+    <!-- Можно добавить больше вопросов -->
+
+    <input type="text" id="username" placeholder="Ваш Telegram username">
+    <br><br>
+    <button onclick="submitResults()">Отправить</button>
+  </div>
+
+  <p id="result"></p>
+
+  <script>
+    function submitResults() {
+      const answers = {
+        username: document.getElementById("username").value,
+        q1: document.querySelector('input[name="q1"]:checked')?.value || "",
+        q2: document.querySelector('input[name="q2"]:checked')?.value || ""
+      };
+
+      const type = answers.q1 + answers.q2;
+      document.getElementById("result").innerText = "Ваш тип: " + type;
+
+      fetch("https://script.google.com/macros/s/AKfycbzT-0K7kHRgi5cBBAjIL5e9JSWxE9Opm40rvaXnr8kF5hV50fhypWbYJQKxb-dVDRgk/exec", {
+        method: "POST",
+        body: JSON.stringify(answers)
+      });
+    }
+  </script>
+</body>
+</html>
