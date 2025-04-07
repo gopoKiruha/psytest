@@ -2,51 +2,61 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Психологический тест</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .question { margin-bottom: 15px; }
-  </style>
+  <title>Авторизация</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Тест MBTI (упрощённо)</h1>
-  <div id="quiz">
-    <div class="question">
-      <label>1. Вам комфортнее в компании или в одиночестве?</label><br>
-      <input type="radio" name="q1" value="E"> В компании<br>
-      <input type="radio" name="q1" value="I"> В одиночестве
-    </div>
+  <h1>Вход или регистрация</h1>
 
-    <div class="question">
-      <label>2. Вы больше опираетесь на факты или интуицию?</label><br>
-      <input type="radio" name="q2" value="S"> Факты<br>
-      <input type="radio" name="q2" value="N"> Интуиция
-    </div>
-
-    <!-- Можно добавить больше вопросов -->
-
-    <input type="text" id="username" placeholder="Ваш Telegram username">
-    <br><br>
-    <button onclick="submitResults()">Отправить</button>
+  <div>
+    <h2>Регистрация</h2>
+    <input id="reg-name" placeholder="Имя"><br>
+    <input id="reg-pass" placeholder="Пароль" type="password"><br>
+    <select id="reg-role">
+      <option value="user">Пользователь</option>
+      <option value="admin">Админ</option>
+    </select><br>
+    <button onclick="register()">Зарегистрироваться</button>
   </div>
 
-  <p id="result"></p>
+  <div style="margin-top:40px;">
+    <h2>Вход</h2>
+    <input id="log-name" placeholder="Имя"><br>
+    <input id="log-pass" placeholder="Пароль" type="password"><br>
+    <button onclick="login()">Войти</button>
+  </div>
 
   <script>
-    function submitResults() {
-      const answers = {
-        username: document.getElementById("username").value,
-        q1: document.querySelector('input[name="q1"]:checked')?.value || "",
-        q2: document.querySelector('input[name="q2"]:checked')?.value || ""
-      };
+    function register() {
+      const name = document.getElementById('reg-name').value;
+      const pass = document.getElementById('reg-pass').value;
+      const role = document.getElementById('reg-role').value;
 
-      const type = answers.q1 + answers.q2;
-      document.getElementById("result").innerText = "Ваш тип: " + type;
+      if (!name || !pass) return alert("Заполни все поля!");
 
-      fetch("https://script.google.com/macros/s/AKfycbzT-0K7kHRgi5cBBAjIL5e9JSWxE9Opm40rvaXnr8kF5hV50fhypWbYJQKxb-dVDRgk/exec", {
-        method: "POST",
-        body: JSON.stringify(answers)
-      });
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      if (users.find(u => u.name === name)) return alert("Пользователь уже есть!");
+
+      users.push({ name, pass, role });
+      localStorage.setItem('users', JSON.stringify(users));
+      alert("Готово! Теперь войди.");
+    }
+
+    function login() {
+      const name = document.getElementById('log-name').value;
+      const pass = document.getElementById('log-pass').value;
+
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(u => u.name === name && u.pass === pass);
+
+      if (!user) return alert("Неверные данные!");
+
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      if (user.role === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'user.html';
+      }
     }
   </script>
 </body>
